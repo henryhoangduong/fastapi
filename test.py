@@ -1,20 +1,17 @@
-from fastapi import FastAPI, APIRouter
+import heroku3
+from dotenv import load_dotenv
+import os 
+
+load_dotenv()
+
+HEROKU_KEY = os.getenv('HEROKU_KEY')
+HEROKU_KEY = os.getenv('HEROKU_KEY')
+
+
 import requests
-import logging
 import os
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
-router = APIRouter()
-
-@router.get('/')
-def root():
-    return {'message':'hello world'}
-
-@router.post('/container/execution')
-def execute():
+def start_worker_dyno():
     heroku_api_key = os.getenv("HEROKU_KEY")
     heroku_app_name = "testone"  # Replace with your Heroku app name
     
@@ -39,8 +36,5 @@ def execute():
         print("Worker dyno started successfully")
     else:
         print(f"Error starting worker dyno: {response.json()}")
-    
 
-
-app = FastAPI()
-app.include_router(router)
+start_worker_dyno()

@@ -2,3 +2,6 @@ uvicorn
 fastapi
 docker
 gitpython
+heroku3
+python-dotenv 
+rq
