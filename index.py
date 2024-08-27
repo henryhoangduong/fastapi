@@ -28,6 +28,19 @@ def syscall():
 def syscallwithshell():
     subprocess.run(['sh','heroku.sh'])
 
+@router.get('/createapp')
+def syscallwithshell():
+    try:
+        logging.info('Creating app......')
+        result = subprocess.run(
+            ['heroku', 'create', '--stack', 'container', '--team', 'asol-devops'],
+            capture_output=True,
+            text=True
+        )
+        return {'message':'succesful', 'data':{result}}
+    except Exception as e:
+        logging.error(f'Error creating apps: {e}')
+    
 
 app = FastAPI()
 app.include_router(router)
