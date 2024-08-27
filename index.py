@@ -2,6 +2,7 @@ from fastapi import FastAPI, APIRouter
 import requests
 import logging
 import os
+import subprocess
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -13,33 +14,19 @@ router = APIRouter()
 def root():
     return {'message':'hello world'}
 
-@router.post('/container/execution')
-def execute():
-    heroku_api_key = os.getenv("HEROKU_KEY")
-    heroku_app_name = "testone"  # Replace with your Heroku app name
-    
-    url = f"https://api.heroku.com/apps/{heroku_app_name}/formation"
-    headers = {
-        "Authorization": f"Bearer {heroku_api_key}",
-        "Accept": "application/vnd.heroku+json; version=3",
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "updates": [
-            {
-                "type": "worker",
-                "quantity": 1 
-            }
-        ]
-    }
-    
-    response = requests.patch(url, headers=headers, json=payload)
-    
-    if response.status_code == 200:
-        print("Worker dyno started successfully")
-    else:
-        print(f"Error starting worker dyno: {response.json()}")
-    
+@router.get('/syscall')
+def syscall():
+    heroku_api_key = os.getenv('HEROKU_API_KEY')
+    print('heroku_api_key: ', heroku_api_key)
+    try:
+        result = subprocess.run(['heroku', 'whoami'], capture_output=True, text=True)
+        print('result: ', result)
+    except Exception as e:
+        print(f'Error login with heroku: {e}')
+
+@router.get('/syscallwithshell')
+def syscallwithshell():
+    subprocess.run(['sh','heroku.sh'])
 
 
 app = FastAPI()
