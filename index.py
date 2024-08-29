@@ -17,17 +17,6 @@ def root():
     return {"message": "hello world"}
 
 
-@router.get("/syscall")
-def sys_call():
-    heroku_api_key = os.getenv("HEROKU_API_KEY")
-    print("heroku_api_key: ", heroku_api_key)
-    try:
-        result = subprocess.run(["heroku", "whoami"], capture_output=True, text=True)
-        print("result: ", result)
-    except Exception as e:
-        print(f"Error login with heroku: {e}")
-
-
 @router.get("/app/creation")
 def create_app(name: str = ""):
     logging.info(f"name: {name}")
@@ -69,6 +58,17 @@ def start_container(app_name:str):
     except Exception as e:
         logging.error(f'Error while {app_name} pulling image: {e}')
 
+@router.get('/app/one-off/start')
+def start_one_off(app_name:str):
+    logging.info("Calling start_container......")
+    if app_name =='':
+        return {'message':'please add app_name'}
+    try:
+        logging.info(f'{app_name} is pulling image from registry.heroku.com')
+        result = subprocess.run(['heroku','run','python','index.py','abc 123',app_name])    
+        return {'message':result}
+    except Exception as e:
+        logging.error(f'Error while {app_name} pulling image: {e}')
 
 app = FastAPI()
 app.include_router(router)
