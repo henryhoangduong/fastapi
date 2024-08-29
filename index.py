@@ -65,7 +65,7 @@ def start_one_off(app_name:str):
         return {'message':'please add app_name'}
     try:
         logging.info(f'{app_name} is pulling image from registry.heroku.com')
-        result = subprocess.run(['heroku','run','python','index.py','abc 123',app_name])    
+        result = subprocess.run(['heroku','run','python','index.py','abc','123','--app',app_name])    
         return {'message':result}
     except Exception as e:
         logging.error(f'Error while {app_name} pulling image: {e}')
